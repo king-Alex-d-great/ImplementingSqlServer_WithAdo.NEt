@@ -55,15 +55,7 @@ namespace BEZAOPayDAL
             string newQuery = "Insert Into Users (Name, Email) Values (@Name, @Email)";
 
             using (IDbCommand command = new SqlCommand(newQuery, _sqlConnection))
-            {
-               /* SqlParameter parameter = new SqlParameter
-                {
-                    ParameterName = "@Id",
-                    Value = Id,
-                    SqlDbType = SqlDbType.Int,
-                };
-                command.Parameters.Add(parameter);*/
-
+            {               
                 SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Name",
@@ -234,7 +226,7 @@ namespace BEZAOPayDAL
             string userName;
             string SelectUserQuery = "SELECT * FROM USERS WHERE Id =(@Id)";
             string DeleteUserQuery = "DELETE FROM USERS WHERE Id =(@Id)";
-            string InsertUserQuery = "INSERT Into USERS (Name, Email) VALUES (@Name, @Email)";
+            string InsertUserQuery = "INSERT INTO Potentialscammers (Name, Email) VALUES (@Name, @Email)";
 
             using (var SelectUser = new SqlCommand(SelectUserQuery, _sqlConnection))
             {
@@ -271,15 +263,7 @@ namespace BEZAOPayDAL
                 Value = user.Id,
                 SqlDbType = SqlDbType.Int
             };
-            DeleteUser.Parameters.Add(Parameter);
-
-            Parameter = new SqlParameter
-            {
-                ParameterName = "@Id",
-                Value = user.Id,
-                SqlDbType = SqlDbType.Int,
-            };
-            InsertUser.Parameters.Add(Parameter);
+            DeleteUser.Parameters.Add(Parameter);            
 
             Parameter = new SqlParameter
             {
