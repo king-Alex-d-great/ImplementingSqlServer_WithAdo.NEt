@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BEZAOPayDAL;
 
 
@@ -20,6 +16,23 @@ namespace BEZAOPay
             {
                 Console.WriteLine($"Id: {user.Id}\nName: {user.Name}\nEmail: {user.Email}");
             }
+            //Read
+            var capturedUser = db.GetUser(4);
+
+            //Create
+           // var InsertedRow = db.InsertUser(20, "kamkam", "kamkam@yaooo.com");
+            var InsertedRow2 = db.InsertUserDynamically(capturedUser);
+
+            //Update
+            var UpdatedRow = db.UpdateUser(capturedUser, "kamsyy", "kamssy@yaooo.com");
+            var UpdatedJustEmailinRow = db.UpdateUser(capturedUser, "kamssy@yaooo.com");
+            var UpdatedJustNameinRow = db.UpdateUser(capturedUser, "kamsyy");
+
+            //Delete
+            var DeletedRow = db.DeleteUser(capturedUser);
+
+
+
         }
     }
 }

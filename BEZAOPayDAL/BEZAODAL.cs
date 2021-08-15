@@ -7,10 +7,9 @@ using BEZAOPayDAL.Models;
 
 namespace BEZAOPayDAL
 {
-   public class BEZAODAL
+   public partial class BEZAODAL
    {
        private readonly string _connectionString;
-
        public BEZAODAL():
            this(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BEZAOPay;Integrated Security=True")
        {
@@ -57,8 +56,6 @@ namespace BEZAOPayDAL
                        Id = (int) reader["Id"],
                        Name = (string) reader["Name"],
                        Email =  (string) reader["Email"]
-
-
                    }); 
                 }
                 reader.Close();
@@ -67,5 +64,7 @@ namespace BEZAOPayDAL
             return users;
 
        }
+
+
     }
 }
