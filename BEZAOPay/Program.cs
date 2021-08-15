@@ -20,18 +20,21 @@ namespace BEZAOPay
             var capturedUser = db.GetUser(4);
 
             //Create
-           // var InsertedRow = db.InsertUser(20, "kamkam", "kamkam@yaooo.com");
-            var InsertedRow2 = db.InsertUserDynamically(capturedUser);
+            // db.InsertUser(20, "kamkam", "kamkam@yaooo.com");
+            // db.InsertUserDynamically(capturedUser);
 
             //Update
-            var UpdatedRow = db.UpdateUser(capturedUser, "kamsyy", "kamssy@yaooo.com");
-            var UpdatedJustEmailinRow = db.UpdateUser(capturedUser, "kamssy@yaooo.com");
-            var UpdatedJustNameinRow = db.UpdateUser(capturedUser, "kamsyy");
+            //var UpdatedRow = db.UpdateUser(capturedUser, "kamsyy", "kamssy@yaooo.com");
+            //var UpdatedJustEmailinRow = db.UpdateUser(capturedUser, "kamssy@yaooo.com");
+            //var UpdatedJustNameinRow = db.UpdateUser(capturedUser, "kamsyy");
 
             //Delete
-            var DeletedRow = db.DeleteUser(capturedUser);
+            // var DeletedRow = db.DeleteUser(capturedUser);
 
+            //transaction
+            db.CapturePotentialScammer(true, capturedUser);
 
+            Console.ReadLine();
 
         }
     }

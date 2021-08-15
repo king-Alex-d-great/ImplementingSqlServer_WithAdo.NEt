@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using BEZAOPayDAL.Models;
@@ -7,7 +6,7 @@ using BEZAOPayDAL.Models;
 namespace BEZAOPayDAL
 {
     public partial class BEZAODAL
-    {      
+    {
         public User GetUser(int id)
         {
             OpenConnection();
@@ -18,11 +17,11 @@ namespace BEZAOPayDAL
 
             using (IDbCommand command = new SqlCommand() { CommandText = newQuery })
             {
-                SqlParameter parameter = new SqlParameter 
-                { 
+                SqlParameter parameter = new SqlParameter
+                {
                     ParameterName = "@Id",
-                    Value = id, 
-                    SqlDbType = SqlDbType.Int                   
+                    Value = id,
+                    SqlDbType = SqlDbType.Int
                 };
                 command.Parameters.Add(parameter);
 
@@ -41,8 +40,6 @@ namespace BEZAOPayDAL
                             Name = (string)datareader["Name"],
                         };
                     }
-                    // Console.WriteLine($"-> {result.GetName(i)} is a {result.GetValue(i)}");
-
                 }
                 datareader.Close();
             }
@@ -53,10 +50,8 @@ namespace BEZAOPayDAL
         {
             OpenConnection();
             int AffectedRow;
-            //string newQuery = $"Insert Into Users (Id, Name, Email) Values ('{Id}', '{Name}', '{Email}')"; //witout parameterized query
-
+            //string newQuery = $"Insert Into Users (Id, Name, Email) Values ('{Id}', '{Name}', '{Email}')"; //witout usin parameterized query
             string newQuery = "Insert Into Users (Id, Name, Email) Values (@Id, @Name, @Email)";
-
 
             using (IDbCommand command = new SqlCommand(newQuery, _sqlConnection))
             {
@@ -64,7 +59,7 @@ namespace BEZAOPayDAL
                 {
                     ParameterName = "@Id",
                     Value = Id,
-                    SqlDbType = SqlDbType.Int,                    
+                    SqlDbType = SqlDbType.Int,
                 };
                 command.Parameters.Add(parameter);
 
@@ -85,14 +80,10 @@ namespace BEZAOPayDAL
                     Size = 20
                 };
                 command.Parameters.Add(parameter);
-
-               
                 AffectedRow = command.ExecuteNonQuery();
-                 
             }
             CloseConnection();
-          //  return AffectedRow;
-            return 0;
+            return AffectedRow;
         }
 
         public int InsertUserDynamically(User user)
@@ -105,6 +96,7 @@ namespace BEZAOPayDAL
 
             using (IDbCommand command = new SqlCommand(newQuery, _sqlConnection))
             {
+
                 SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Id",
@@ -129,12 +121,11 @@ namespace BEZAOPayDAL
                     SqlDbType = SqlDbType.Char,
                     Size = 20
                 };
-                command.Parameters.Add(parameter);                
-
+                command.Parameters.Add(parameter);
                 AffectedRow = command.ExecuteNonQuery();
             }
             CloseConnection();
-            //Console.WriteLine();
+            Console.WriteLine();
             return AffectedRow;
         }
 
@@ -146,11 +137,9 @@ namespace BEZAOPayDAL
             //  string newQuery = $"Delete * From Users where Id = {Id}"; //witout parameterized query
             string newQuery = "Delete * From Users where Id = (@Id)";
 
-
             using (IDbCommand command = new SqlCommand() { CommandText = newQuery })
             {
                 command.Connection = _sqlConnection;
-
                 SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Id",
@@ -158,7 +147,7 @@ namespace BEZAOPayDAL
                     SqlDbType = SqlDbType.Int,
                     Direction = ParameterDirection.Input
                 };
-                command.Parameters.Add(parameter);                
+                command.Parameters.Add(parameter);
 
                 parameter = new SqlParameter
                 {
@@ -171,12 +160,12 @@ namespace BEZAOPayDAL
                 Row = command.ExecuteNonQuery();
                 AffectedRow = (int)command.Parameters["@Row"];
             }
-            
+
             CloseConnection();
             return AffectedRow;
         }
 
-        public int UpdateUser(User user, string newEmail = null, string newName = null)
+        public int? UpdateUser(User user, string newEmail = null, string newName = null)
         {
             //A user CANNOT update an ID, just name and email!
             OpenConnection();
@@ -194,7 +183,7 @@ namespace BEZAOPayDAL
                 SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Id",
-                    Value =user.Id,
+                    Value = user.Id,
                     SqlDbType = SqlDbType.Int,
                 };
                 command.Parameters.Add(parameter);
@@ -202,7 +191,7 @@ namespace BEZAOPayDAL
                 parameter = new SqlParameter
                 {
                     ParameterName = "@Name",
-                    Value =newName,
+                    Value = newName,
                     SqlDbType = SqlDbType.Char,
                     Size = 10
                 };
@@ -215,32 +204,28 @@ namespace BEZAOPayDAL
                     SqlDbType = SqlDbType.Char,
                     Size = 10
                 };
-                command.Parameters.Add(parameter);
+                command.Parameters.Add(parameter);                
 
-               /* parameter = new SqlParameter
-                {
-                    ParameterName = "@AffectedRow",
-                    SqlDbType = SqlDbType.Int,
-                    Direction = ParameterDirection.Output
-                };
-                command.Parameters.Add(parameter);*/
-
+                //update just email
                 if (newEmail != null && newName == null)
                 {
                     command.CommandText = Emailquery;
                 }
+                //update just Name
                 if (newEmail == null && newName != null)
                 {
                     command.CommandText = Namequery;
                 }
+                //update email and name
                 if (newEmail != null && newName != null)
                 {
-                    command.CommandText = $"Update User Set Name = '{newName}' Where Id = '{user.Id}'; Update User Set Email = '{newEmail}' Where Id = '{user.Id}'";
+                    command.CommandText = $"Update User Set Name = '{newName}' Where Id = {user.Id}; Update User Set Email = '{newEmail}' Where Id = {user.Id}";
                 }
                 else
                 {
-                   Console.WriteLine("you did not specify a column to update ");
-                   Console.WriteLine("parameter one = Id Of User you chose to update\nparameter two = New Email\n Parameter three = New Name");
+                    Console.WriteLine("you did not specify a column to update ");
+                    Console.WriteLine("parameter one = Id Of User you chose to update\nparameter two = New Email\n Parameter three = New Name");
+                    return null;
                 }
                 AffectedRow = command.ExecuteNonQuery();
             }
@@ -248,13 +233,13 @@ namespace BEZAOPayDAL
             return AffectedRow;
         }
 
-        public void CapturePotentialScammer (bool throwEX, User user)
+        public void CapturePotentialScammer(bool throwEX, User user)
         {
             OpenConnection();
             string userName;
-            string SelectUserQuery = "Select * From Users where Id =(@Id)";
-            string DeleteUserQuery = "DELETE From Users where Id =(@Id)";
-            string InsertUserQuery = "INSERT Into Users (Id, Name, Email) Values (@Id, @Name, @Email)";
+            string SelectUserQuery = "SELECT * FROM USERS WHERE Id =(@Id)";
+            string DeleteUserQuery = "DELETE FROM USERS WHERE Id =(@Id)";
+            string InsertUserQuery = "INSERT Into USERS (Id, Name, Email) VALUES (@Id, @Name, @Email)";
 
             using (var SelectUser = new SqlCommand(SelectUserQuery, _sqlConnection))
             {
@@ -273,7 +258,8 @@ namespace BEZAOPayDAL
                     {
                         dataReader.Read();
                         userName = (string)dataReader["Name"];
-                    } else
+                    }
+                    else
                     {
                         CloseConnection();
                         return;
@@ -288,9 +274,16 @@ namespace BEZAOPayDAL
             {
                 ParameterName = "@Id",
                 Value = user.Id,
-                SqlDbType = SqlDbType.Int,
+                SqlDbType = SqlDbType.Int
             };
             DeleteUser.Parameters.Add(Parameter);
+
+            Parameter = new SqlParameter
+            {
+                ParameterName = "@Id",
+                Value = user.Id,
+                SqlDbType = SqlDbType.Int,
+            };
             InsertUser.Parameters.Add(Parameter);
 
             Parameter = new SqlParameter
@@ -323,20 +316,19 @@ namespace BEZAOPayDAL
                 DeleteUser.ExecuteNonQuery();
                 InsertUser.ExecuteNonQuery();
 
+                //simulatin an unforeseen circumstance
                 if (throwEX)
-                { 
-                    throw new Exception("Sorry!  Database error! Transaction failed..."); 
+                {
+                    throw new Exception("Sorry!  Database error! Transaction failed...");
                 }
                 transaction.Commit();
-            } 
-            catch(Exception error)
+            }
+            catch (Exception error)
             {
-                Console.WriteLine(error.Message);   
+                Console.WriteLine(error.Message);
                 transaction?.Rollback();
             }
             CloseConnection();
-
-            
         }
     }
 }
