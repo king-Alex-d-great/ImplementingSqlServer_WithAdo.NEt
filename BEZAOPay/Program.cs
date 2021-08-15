@@ -11,28 +11,35 @@ namespace BEZAOPay
             var db = new BEZAODAL();
 
             var users = db.GetAllUsers();
-
             foreach (var user in users)
             {
                 Console.WriteLine($"Id: {user.Id}\nName: {user.Name}\nEmail: {user.Email}");
             }
+
+           // UNCOMMENT METODS BELOW TO TEST
+
             //Read
-            var capturedUser = db.GetUser(4);
+            var capturedUser = db.GetUser(1007);
 
             //Create
-            // db.InsertUser(20, "kamkam", "kamkam@yaooo.com");
-            // db.InsertUserDynamically(capturedUser);
+             //var AffectedRow = db.InsertUser("kamkam", "kamkam@yaooo.com");
+             //var affectedRow = db.InsertUserDynamically(capturedUser);
 
             //Update
-            //var UpdatedRow = db.UpdateUser(capturedUser, "kamsyy", "kamssy@yaooo.com");
-            //var UpdatedJustEmailinRow = db.UpdateUser(capturedUser, "kamssy@yaooo.com");
+             var UpdatedRow = db.UpdateUser(capturedUser,"kamssy@yaooo.com", "kamsyy");
+             //var UpdatedJustEmailinRow = db.UpdateUser(capturedUser, "kamssy@yaooo.com");
             //var UpdatedJustNameinRow = db.UpdateUser(capturedUser, "kamsyy");
 
             //Delete
-            // var DeletedRow = db.DeleteUser(capturedUser);
+            //NOTE TO TESTER :
+            //Please wen tryin dis delete metod , make sure captured user has an Id within the range 1007 - 1047 
+            //db.DeleteUser(capturedUser);
 
-            //transaction
-            db.CapturePotentialScammer(true, capturedUser);
+            //Transaction
+            //NOTE TO TESTER :
+            //This metod will delete any User passed to it
+            //Please wen tryin dis Transaction metod , make sure captured user has an Id within the range 1007 - 1047 
+           // db.CapturePotentialScammer(false, capturedUser);           
 
             Console.ReadLine();
 

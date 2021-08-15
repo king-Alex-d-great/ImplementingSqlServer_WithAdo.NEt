@@ -43,27 +43,28 @@ namespace BEZAOPayDAL
                 }
                 datareader.Close();
             }
+            Console.WriteLine($"\nUsername: {user.Name}\nUserid: {user.Id}\nEmail: {user.Email}");
             return user;
         }
 
-        public int InsertUser(int Id, string Name, string Email)
+        public int InsertUser(string Name, string Email)
         {
             OpenConnection();
             int AffectedRow;
             //string newQuery = $"Insert Into Users (Id, Name, Email) Values ('{Id}', '{Name}', '{Email}')"; //witout usin parameterized query
-            string newQuery = "Insert Into Users (Id, Name, Email) Values (@Id, @Name, @Email)";
+            string newQuery = "Insert Into Users (Name, Email) Values (@Name, @Email)";
 
             using (IDbCommand command = new SqlCommand(newQuery, _sqlConnection))
             {
-                SqlParameter parameter = new SqlParameter
+               /* SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Id",
                     Value = Id,
                     SqlDbType = SqlDbType.Int,
                 };
-                command.Parameters.Add(parameter);
+                command.Parameters.Add(parameter);*/
 
-                parameter = new SqlParameter
+                SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Name",
                     Value = Name,
@@ -82,6 +83,7 @@ namespace BEZAOPayDAL
                 command.Parameters.Add(parameter);
                 AffectedRow = command.ExecuteNonQuery();
             }
+            Console.WriteLine($"\nInserted new user wit\nUsername: {Name}\nEmail: {Email}");
             CloseConnection();
             return AffectedRow;
         }
@@ -92,20 +94,12 @@ namespace BEZAOPayDAL
             int AffectedRow;
             //string newQuery = $"Insert Into Users (Id, Name, Email) Values ('{user.Id}', '{user.Name}', '{user.Email}')"; //witout parameterized query
 
-            string newQuery = "Insert Into Users (Id, Name, Email) Values (@Id, @Name, @Email)";
+            string newQuery = "Insert Into Users (Name, Email) Values (@Name, @Email)";
 
             using (IDbCommand command = new SqlCommand(newQuery, _sqlConnection))
-            {
+            {               
 
-                SqlParameter parameter = new SqlParameter
-                {
-                    ParameterName = "@Id",
-                    Value = user.Id,
-                    SqlDbType = SqlDbType.Int,
-                };
-                command.Parameters.Add(parameter);
-
-                parameter = new SqlParameter
+               SqlParameter parameter = new SqlParameter
                 {
                     ParameterName = "@Name",
                     Value = user.Name,
@@ -124,18 +118,18 @@ namespace BEZAOPayDAL
                 command.Parameters.Add(parameter);
                 AffectedRow = command.ExecuteNonQuery();
             }
-            CloseConnection();
-            Console.WriteLine();
+            Console.WriteLine($"\nInserted new user wit\nUsername: {user.Name}\nEmail: {user.Email}");
+            CloseConnection();            
             return AffectedRow;
         }
 
-        public int DeleteUser(User user)
+        public void DeleteUser(User user)
         {
             OpenConnection();
-            int AffectedRow;
+            
             int Row;
             //  string newQuery = $"Delete * From Users where Id = {Id}"; //witout parameterized query
-            string newQuery = "Delete * From Users where Id = (@Id)";
+            string newQuery = "Delete From Users where Id = (@Id)";
 
             using (IDbCommand command = new SqlCommand() { CommandText = newQuery })
             {
@@ -158,11 +152,11 @@ namespace BEZAOPayDAL
                 command.Parameters.Add(parameter);
 
                 Row = command.ExecuteNonQuery();
-                AffectedRow = (int)command.Parameters["@Row"];
+                
             }
-
+            Console.WriteLine($"\nDeleted User : {user.Id}\n");
             CloseConnection();
-            return AffectedRow;
+            
         }
 
         public int? UpdateUser(User user, string newEmail = null, string newName = null)
@@ -218,8 +212,8 @@ namespace BEZAOPayDAL
                 }
                 //update email and name
                 if (newEmail != null && newName != null)
-                {
-                    command.CommandText = $"Update User Set Name = '{newName}' Where Id = {user.Id}; Update User Set Email = '{newEmail}' Where Id = {user.Id}";
+                {                    
+                    command.CommandText = $"Update Users Set Email = '(@newEmail)' Where Id = (@id);Update Users Set Name = '(@newName)' Where Id = (@id)";
                 }
                 else
                 {
@@ -228,6 +222,7 @@ namespace BEZAOPayDAL
                     return null;
                 }
                 AffectedRow = command.ExecuteNonQuery();
+                Console.WriteLine($"\nNumber of Affected Rows: {AffectedRow}\nUpdated user: {user.Id} To\nUsername: {newName}\nEmail: {newEmail}");
             }
             CloseConnection();
             return AffectedRow;
@@ -239,7 +234,7 @@ namespace BEZAOPayDAL
             string userName;
             string SelectUserQuery = "SELECT * FROM USERS WHERE Id =(@Id)";
             string DeleteUserQuery = "DELETE FROM USERS WHERE Id =(@Id)";
-            string InsertUserQuery = "INSERT Into USERS (Id, Name, Email) VALUES (@Id, @Name, @Email)";
+            string InsertUserQuery = "INSERT Into USERS (Name, Email) VALUES (@Name, @Email)";
 
             using (var SelectUser = new SqlCommand(SelectUserQuery, _sqlConnection))
             {
@@ -319,9 +314,11 @@ namespace BEZAOPayDAL
                 //simulatin an unforeseen circumstance
                 if (throwEX)
                 {
-                    throw new Exception("Sorry!  Database error! Transaction failed...");
+                    Console.Clear();
+                    throw new Exception("\nSorry!  Database error! Transaction failed...\n");
                 }
                 transaction.Commit();
+                Console.WriteLine("\nTransaction Successful !\n");
             }
             catch (Exception error)
             {
